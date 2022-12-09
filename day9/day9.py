@@ -1,5 +1,5 @@
 def main():
-    partTwo()
+    partOne()
 
 def partOne():
     with open("input.txt") as f:
@@ -35,9 +35,8 @@ direction = {
     'U': (0,  1),
     'D': (0, -1)
 }
-
+  
 class Head:
-
     @staticmethod
     def goTo(dir, steps, head):
         global direction
@@ -65,6 +64,17 @@ class Head:
         tailPos = self.tail.viewPos()
         print(str((self.currentX, self.currentY)) + " " + tailPos)
 
+def updateNode(head, current, execute: lambda x: x):
+    deltaX = head.currentX - current.currentX
+    deltaY = head.currentY - current.currentY
+
+    if abs(deltaX) >= 2 or abs(deltaY) >= 2:
+        xDir = 1 if deltaX > 0 else 0 if deltaX == 0 else -1
+        yDir = 1 if deltaY > 0 else 0 if deltaY == 0 else -1
+        current.currentX += xDir
+        current.currentY += yDir
+        execute()  
+
 class Tail:
     def __init__(self):
         self.currentX = 0
@@ -73,15 +83,7 @@ class Tail:
         self.visited.add((self.currentX, self.currentY))
     
     def trail(self, head):
-        deltaX = head.currentX - self.currentX
-        deltaY = head.currentY - self.currentY
-
-        if abs(deltaX) >= 2 or abs(deltaY) >= 2:
-            xDir = 1 if deltaX > 0 else 0 if deltaX == 0 else -1
-            yDir = 1 if deltaY > 0 else 0 if deltaY == 0 else -1
-            self.currentX += xDir
-            self.currentY += yDir
-            self.visited.add((self.currentX, self.currentY))
+        updateNode(head, self, lambda : self.visited.add((self.currentX, self.currentY)))
 
     def viewPos(self):
         return str((self.currentX, self.currentY))
@@ -95,15 +97,8 @@ class Body:
     
     def trail(self, head):
         # print(self.qualifier + " " + str(head.prevX))
-        deltaX = head.currentX - self.currentX
-        deltaY = head.currentY - self.currentY
-
-        if abs(deltaX) >= 2 or abs(deltaY) >= 2:
-            xDir = 1 if deltaX > 0 else 0 if deltaX == 0 else -1
-            yDir = 1 if deltaY > 0 else 0 if deltaY == 0 else -1
-            self.currentX += xDir
-            self.currentY += yDir
-            self.tail.trail(self)
+        updateNode(head, self, lambda : self.tail.trail(self))
+            
     
     def viewPos(self):
         tailPos = self.tail.viewPos()
