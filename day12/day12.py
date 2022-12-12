@@ -10,13 +10,18 @@ def partOne():
 
 def partTwo():
     maze, _, endPos = generateMaze()
-    startPositions = []
-    for yi in range(0, len(maze)):
-        for xi in range(0, len(maze[0])):
-            if maze[yi][xi] == 0:
-                startPositions.append((yi, xi))
-    allValues = map(lambda x: bfs(maze, x, endPos), startPositions)
-    print(min(allValues))
+    # slow method:
+    # startPositions = []
+    # for yi in range(0, len(maze)):
+    #     for xi in range(0, len(maze[0])):
+    #         if maze[yi][xi] == 0:
+    #             startPositions.append((yi, xi))
+    # allValues = map(lambda x: bfs(maze, x, endPos), startPositions)
+    # print(min(allValues))
+    
+    # fast method: 
+    # traverse from end position to any "a" 
+    scenicBfs(maze, endPos)
 
 def generateMaze():
     maze = []
@@ -75,6 +80,41 @@ def bfs(maze, startPos, endPos):
                 print(level)
                 break
         if visited[endPos[0]][endPos[1]]:
+            break
+        frontier.extend(allValidNodes)
+
+
+def scenicBfs(maze, startPos):
+    dimY = len(maze)
+    dimX = len(maze[0])
+    visited = [[False for _ in range(0, dimX)] for _ in range(0, dimY)]
+    level = 1
+    visited[0][0] = True
+    frontier = deque([startPos])
+    currentLevelNodes = 1
+    nextLevelNodes = 0
+    done = False
+    while True:
+        if currentLevelNodes <= 0:
+            currentLevelNodes = nextLevelNodes
+            nextLevelNodes = 0
+            level += 1
+        if not frontier:
+            return 9999999999
+        nextNode = frontier.popleft()
+        currentLevelNodes -= 1
+        nextNodes = generateAdj(nextNode, dimX=dimX, dimY=dimY)
+        allValidNodes = list(filter(lambda node: \
+            not visited[node[0]][node[1]] and maze[node[0]][node[1]] >= maze[nextNode[0]][nextNode[1]] - 1,
+            nextNodes))
+        for node in allValidNodes:
+            nextLevelNodes += 1
+            visited[node[0]][node[1]] = True
+            if maze[node[0]][node[1]] == 0:
+                print(level)
+                done = True
+                break
+        if done:
             break
         frontier.extend(allValidNodes)
     
