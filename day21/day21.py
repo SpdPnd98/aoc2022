@@ -16,8 +16,6 @@ def partTwo():
     elif allMonke[allMonke["root"].childTwo].atChild("humn") != 0:
         value = -1
         toMatch = allMonke[allMonke["root"].childOne].traverseNode()
-    else:
-        print("I think nikgay")
         return 
     # print(allMonke[allMonke["root"].childOne])
     lowerBound = 3342154812537
