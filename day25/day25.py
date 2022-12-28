@@ -114,7 +114,6 @@ def decToSnarfu(dec):
             print("    Generated new carry over %s" %handleCarryOver)
             snarfuNum.append(handleCarryOver[0])
             if len(handleCarryOver) > 1 and len(newSnarfuNum) > 1:
-                print("nikgay")
                 carryOver = snarfuArithmetic(handleCarryOver[1], newSnarfuNum[1])
                 continue
             elif len(handleCarryOver) > 1:
